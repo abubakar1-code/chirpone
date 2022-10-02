@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Chanels app</title>
+</head>
+<body>
+
+    <textarea name="chat-log" id="chat-log" cols="34" rows="10"></textarea><br>
+    <input type="text" name="" id="chat-message-input" >
+    <input type="button" value="send" id="chat-message-submit">
+    <script>
+        var ws = new WebSocket('ws://127.0.0.1:8000/ws/sc/')
+        ws.onopen=function(){
+            console.log('websocket connection open...')
+            ws.send('message recieve from client')
+        }
+        ws.onmessage=function(event){
+            console.log('Message recieve from server.....',event.data)
+            const data = JSON.parse(event.data)
+            console.log('parse data',data.message,data.data22)
+            document.querySelector('#chat-log').value += (data.message+'\n')
+        }
+        ws.onclose=function(event){
+            console.log('chat socket closed unexpetly.....')
+        
+        }
+        document.getElementById('chat-message-submit').onclick=function (event){
+            const messsageInputDom = document.getElementById('chat-message-input')
+            const message = messsageInputDom.value
+            ws.send(JSON.stringify({
+                'message':message
+            }))
+
+        messsageInputDom.value=''
+        }
+
+    </script>
+    
+</body>
+</html>
